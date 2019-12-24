@@ -1,0 +1,165 @@
+import * as React from "react";
+import { Popper } from "react-popper";
+import classNames from "classnames";
+import { LookUpResult } from "@wordway/translate-api";
+
+import ShadowRoot from "../ShadowRoot";
+import InjectTransTooltipIcon from "./InjectTransTooltipIcon";
+import InjectTransTooltipResult from "./InjectTransTooltipResult";
+
+import cls from "./InjectTransTooltip.module.scss";
+
+class VirtualReferenceElement {
+  boundingClientRect: DOMRect;
+
+  constructor(boundingClientRect: DOMRect) {
+    this.boundingClientRect = boundingClientRect;
+  }
+
+  getBoundingClientRect() {
+    return this.boundingClientRect;
+  }
+
+  get clientWidth() {
+    return this.getBoundingClientRect().width;
+  }
+
+  get clientHeight() {
+    return this.getBoundingClientRect().height;
+  }
+}
+
+interface InjectTransTooltipProps {
+  q: string;
+  boundingClientRect: DOMRect;
+  onShow: any;
+  onHide: any;
+}
+
+interface InjectTransTooltipState {
+  visible: boolean;
+  switching: boolean;
+  lookUpResult?: LookUpResult;
+}
+
+class InjectTransTooltip extends React.Component<
+  InjectTransTooltipProps,
+  InjectTransTooltipState
+> {
+  virtualReferenceElement: VirtualReferenceElement;
+
+  constructor(props: InjectTransTooltipProps, state: InjectTransTooltipState) {
+    super(props, state);
+
+    this.virtualReferenceElement = new VirtualReferenceElement(
+      props.boundingClientRect
+    );
+
+    this.state = { visible: true, switching: false };
+  }
+
+  componentDidMount() {
+    document.addEventListener("mouseup", this.onMouseUp);
+    document.addEventListener("mousedown", this.onMouseDown);
+  }
+
+  onMouseUp = () => {};
+
+  onMouseDown = ({ path = [] }: any) => {
+    if (path.findIndex(({ id }: any) => id === "___wordway") >= 0) return;
+
+    this.handleClose();
+  };
+
+  handleClose = () => {
+    const { onHide } = this.props;
+
+    this.setState({
+      visible: false
+    });
+
+    setTimeout(() => onHide(), 200);
+  };
+
+  renderTransTooltipIcon = () => {
+    const { q } = this.props;
+    const handleLoadComplete = (lookUpResult: any) => {
+      this.setState({ switching: true });
+      setTimeout(() => {
+        this.setState({
+          switching: false,
+          lookUpResult
+        });
+      }, 10);
+    };
+
+    return (
+      <ShadowRoot>
+        <InjectTransTooltipIcon
+          q={q}
+          onLoadComplete={handleLoadComplete}
+        />
+      </ShadowRoot>
+    );
+  };
+
+  renderTransTooltipResult = () => {
+    return (
+      <>
+        <InjectTransTooltipResult
+          q={this.props.q}
+          lookUpResult={this.state.lookUpResult}
+        />
+        <button onClick={this.handleClose} className={cls["btn-close"]}>
+          <span />
+        </button>
+      </>
+    );
+  };
+
+  render() {
+    const { switching, lookUpResult } = this.state;
+    if (switching) return <div />;
+
+    let popperBody = lookUpResult
+      ? this.renderTransTooltipResult()
+      : this.renderTransTooltipIcon();
+
+    return (
+      <Popper referenceElement={this.virtualReferenceElement}>
+        {({ ref, style, placement, arrowProps }) => (
+          <div ref={ref} className={cls["trans-tooltip"]} style={style}>
+            <div
+              className={classNames(cls["popper"], {
+                [cls["popper-fade-in-up"]]:
+                  (placement || "bottom").startsWith("top") &&
+                  this.state.visible,
+                [cls["popper-fade-in-down"]]:
+                  (placement || "bottom").startsWith("bottom") &&
+                  this.state.visible,
+                [cls["popper-fade-out-up"]]:
+                  (placement || "bottom").startsWith("top") &&
+                  !this.state.visible,
+                [cls["popper-fade-out-down"]]:
+                  (placement || "bottom").startsWith("bottom") &&
+                  !this.state.visible
+              })}
+            >
+              <div className={cls["popper-body"]}>{popperBody}</div>
+              {!lookUpResult ? null : (
+                <div
+                  ref={arrowProps.ref}
+                  data-placement={placement}
+                  className={cls["popper-arrow"]}
+                  style={arrowProps.style}
+                />
+              )}
+            </div>
+          </div>
+        )}
+      </Popper>
+    );
+  }
+}
+
+export default InjectTransTooltip;
