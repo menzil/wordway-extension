@@ -2058,11 +2058,15 @@
   version "0.0.0"
   uid ""
 
-"@wordway/translate-engine-web-youdao@link:../wordway/packages/translate-engine-web-youdao":
+"@wordway/translate-engine-youdao@link:../wordway/packages/translate-engine-youdao":
   version "0.0.0"
   uid ""
 
-"@wordway/translate-engine-youdao@link:../wordway/packages/translate-engine-youdao":
+"@wordway/translate-webengine-bing@link:../wordway/packages/translate-webengine-bing":
+  version "0.0.0"
+  uid ""
+
+"@wordway/translate-webengine-youdao@link:../wordway/packages/translate-webengine-youdao":
   version "0.0.0"
   uid ""
 

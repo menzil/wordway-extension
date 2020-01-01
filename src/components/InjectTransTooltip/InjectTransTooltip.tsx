@@ -3,7 +3,6 @@ import { Popper } from "react-popper";
 import classNames from "classnames";
 import { LookUpResult } from "@wordway/translate-api";
 
-import ShadowRoot from "../ShadowRoot";
 import InjectTransTooltipIcon from "./InjectTransTooltipIcon";
 import InjectTransTooltipResult from "./InjectTransTooltipResult";
 
@@ -94,12 +93,10 @@ class InjectTransTooltip extends React.Component<
     };
 
     return (
-      <ShadowRoot>
-        <InjectTransTooltipIcon
-          q={q}
-          onLoadComplete={handleLoadComplete}
-        />
-      </ShadowRoot>
+      <InjectTransTooltipIcon
+        q={q}
+        onLoadComplete={handleLoadComplete}
+      />
     );
   };
 

@@ -10,7 +10,6 @@ import {
   WidgetContent,
   Radio,
 } from "@duik/it";
-// import Icon from "@duik/icon";
 import toastr from "toastr";
 
 import { SelectTranslateEngine } from "../../components";
@@ -27,7 +26,7 @@ interface OptionsState {
 const defaultOptions = {
   highlightNewWordsMode: "",
   selectionTranslateMode: "enable-translate-tooltip",
-  selectionTranslateEngine: "web-youdao"
+  selectionTranslateEngine: "youdao-web"
 };
 
 class Options extends React.Component<OptionsProps, OptionsState> {
@@ -111,7 +110,7 @@ class Options extends React.Component<OptionsProps, OptionsState> {
                       target="__blank"
                     >
                       <img
-                        src="./icon128.png"
+                        src="./images/icon128.png"
                         alt="logo"
                         style={{ width: '26px' }}
                       />

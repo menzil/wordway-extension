@@ -15,7 +15,7 @@ import ShadowRoot from "../ShadowRoot";
 
 const IpaItem = (props: any) => {
   const { flag, ipa, pronunciationUrl } = props;
-  if (!ipa) return <div />;
+  if (!ipa && !pronunciationUrl) return <div />;
   return (
     <div
       style={{
@@ -30,8 +30,8 @@ const IpaItem = (props: any) => {
           marginRight: "6px"
         }}
       >
-        {flag}
-        {` [${ipa}]`}
+        {`${flag}`}
+        {ipa ? ` [${ipa}]` : ''}
       </span>
       <button
         style={{
@@ -41,7 +41,8 @@ const IpaItem = (props: any) => {
           paddingRight: "4px",
           background: "transparent",
           border: "none",
-          marginTop: "2px"
+          marginTop: "2px",
+          outline: "none"
         }}
         onClick={() => {
           chrome.runtime.sendMessage({
@@ -72,15 +73,16 @@ const DefinitionListItem = (props: any) => {
     >
       <span
         style={{
+          fontSize: '13px',
           fontWeight: "bold",
           paddingTop: 0,
           paddingBottom: 0,
-          paddingLeft: "6px",
-          paddingRight: "6px",
+          paddingLeft: "4px",
+          paddingRight: "4px",
           marginRight: "10px",
-          minWidth: "38px",
-          height: "22px",
-          lineHeight: "22px",
+          minWidth: "42px",
+          height: "20px",
+          lineHeight: "20px",
           backgroundColor: "var(--text-secondary)",
           color: "#fff",
           verticalAlign: "middle",
@@ -95,7 +97,8 @@ const DefinitionListItem = (props: any) => {
           padding: 0,
           margin: 0,
           display: "flex",
-          flex: 1
+          flex: 1,
+          lineHeight: "20px"
         }}
       >
         {values.join("；")}
@@ -151,8 +154,104 @@ class InjectTransTooltipResult extends React.Component<
   //   super(props, state);
   // }
 
-  componentDidMount() {
-    console.log(JSON.stringify(this.props.lookUpResult, null, 2));
+  renderLookUpResult() {
+    const { lookUpResult }: InjectTransTooltipResultProps = this.props;
+
+    if (!lookUpResult?.word) {
+      return (
+        <>
+          <WidgetContent
+            style={{
+              padding: "16px 16px"
+            }}
+          >
+            <h4
+              style={{
+                marginRight: "12px"
+              }}
+            >
+              {lookUpResult?.sourceText}
+            </h4>
+          </WidgetContent>
+          <Divider />
+          <WidgetContent
+            style={{
+              padding: "16px 16px"
+            }}
+          >
+            <FormGroupContainer>
+              <span
+                style={{
+                  fontWeight: "bold",
+                  fontSize: "1.125rem",
+                  lineHeight: "1.75rem"
+                }}
+              >
+                {lookUpResult?.targetText}
+              </span>
+            </FormGroupContainer>
+          </WidgetContent>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <WidgetContent
+          style={{
+            padding: "16px 16px"
+          }}
+        >
+          <h3
+            style={{
+              marginRight: "12px"
+            }}
+          >
+            {lookUpResult?.word}
+          </h3>
+        </WidgetContent>
+        <Divider />
+        <WidgetContent
+          style={{
+            padding: "16px 16px"
+          }}
+        >
+          <FormGroupContainer>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row"
+              }}
+            >
+              <IpaItem
+                flag="美"
+                ipa={lookUpResult?.usIpa}
+                pronunciationUrl={lookUpResult?.usPronunciationUrl}
+              />
+              <IpaItem
+                flag="英"
+                ipa={lookUpResult?.ukIpa}
+                pronunciationUrl={lookUpResult?.ukPronunciationUrl}
+              />
+            </div>
+            <DefinitionWrapper>
+              {lookUpResult?.definitions?.map((v: any) => (
+                <DefinitionListItem
+                  key={v?.values?.join("；")}
+                  type={v.type}
+                  values={v.values}
+                />
+              ))}
+            </DefinitionWrapper>
+            <TenseWrapper>
+              {lookUpResult?.tenses?.map((v: any) => (
+                <TenseListItem key={v.type} name={v.name} values={v.values} />
+              ))}
+            </TenseWrapper>
+          </FormGroupContainer>
+        </WidgetContent>
+      </>
+    );
   }
 
   render() {
@@ -175,63 +274,7 @@ class InjectTransTooltipResult extends React.Component<
               boxShadow: "none"
             }}
           >
-            <WidgetContent
-              style={{
-                padding: "16px 16px"
-              }}
-            >
-              <h3
-                style={{
-                  marginRight: "12px"
-                }}
-              >
-                {lookUpResult?.word}
-              </h3>
-            </WidgetContent>
-            <Divider />
-            <WidgetContent
-              style={{
-                padding: "16px 16px"
-              }}
-            >
-              <FormGroupContainer>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row"
-                  }}
-                >
-                  <IpaItem
-                    flag="英"
-                    ipa={lookUpResult?.ukIpa}
-                    pronunciationUrl={lookUpResult?.ukPronunciationUrl}
-                  />
-                  <IpaItem
-                    flag="美"
-                    ipa={lookUpResult?.ukIpa}
-                    pronunciationUrl={lookUpResult?.usPronunciationUrl}
-                  />
-                </div>
-                <DefinitionWrapper>
-                  {lookUpResult?.definitions?.map((v: any) => (
-                    <DefinitionListItem
-                      key={v?.values?.join("；")}
-                      type={v.type}
-                      values={v.values}
-                    />
-                  ))}
-                </DefinitionWrapper>
-                <TenseWrapper>
-                  {lookUpResult?.tenses?.map((v: any) => (
-                    <TenseListItem
-                      key={v.type}
-                      name={v.name}
-                      values={v.values}
-                    />
-                  ))}
-                </TenseWrapper>
-              </FormGroupContainer>
-            </WidgetContent>
+            {this.renderLookUpResult()}
             <Divider />
             <WidgetContent
               style={{
@@ -239,12 +282,14 @@ class InjectTransTooltipResult extends React.Component<
                 padding: "16px 16px"
               }}
             >
-              <ButtonGroup sm>
-                <Button>
-                  <FeatherIcons.Bookmark size={16} color="var(--text-main)" />
-                </Button>
-                <Button>添加到生词本</Button>
-              </ButtonGroup>
+              {!lookUpResult?.word ? null : (
+                <ButtonGroup sm>
+                  <Button>
+                    <FeatherIcons.Bookmark size={16} color="var(--text-main)" />
+                  </Button>
+                  <Button>添加到生词本</Button>
+                </ButtonGroup>
+              )}
               <div style={{ flex: 1 }} />
               <Button
                 transparent

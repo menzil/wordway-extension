@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Button } from "@duik/it";
-import Icon from "@duik/icon";
 import Translate, { LookUpResult } from "@wordway/translate-api";
-import IcibaEngine from "@wordway/translate-engine-iciba";
-import WebYoudaoEngine from "@wordway/translate-engine-web-youdao";
+import BingWebEngine from "@wordway/translate-webengine-bing";
+import YoudaoWebEngine from "@wordway/translate-webengine-youdao";
 
 import ShadowRoot from "../ShadowRoot";
+import r from "../../utils/r";
 
 interface InjectTransTooltipIconProps {
   q: string;
@@ -29,20 +29,15 @@ class InjectTransTooltipIcon extends React.Component<
   ) {
     super(props, state);
 
-    const icibaEngine = new IcibaEngine({
-      key: "<key>"
-    });
-    const webYoudaoEngine = new WebYoudaoEngine();
+    const bingWebEngine = new BingWebEngine();
+    const youdaoWebEngine = new YoudaoWebEngine();
 
-    this.translate = new Translate([
-      icibaEngine,
-      webYoudaoEngine,
-    ]);
+    this.translate = new Translate([bingWebEngine, youdaoWebEngine]);
 
     this.state = {
       selectionTranslateMode: "enable-translate-tooltip",
-      selectionTranslateEngine: "web-youdao",
-      loading: false,
+      selectionTranslateEngine: "youdao-web",
+      loading: false
     };
   }
 
@@ -51,7 +46,7 @@ class InjectTransTooltipIcon extends React.Component<
     const callback = (result: any) => {
       this.setState({ ...result });
       const { selectionTranslateMode } = result;
-      if (selectionTranslateMode === 'enable-translate-tooltip') {
+      if (selectionTranslateMode === "enable-translate-tooltip") {
         this.reloadData();
       }
     };
@@ -70,11 +65,14 @@ class InjectTransTooltipIcon extends React.Component<
       .lookUp(q);
 
     const usedTime = new Date().getTime() - beginTime;
-    setTimeout(() => {
-      this.setState({ loading: false }, () => {
-        onLoadComplete(lookUpResult);
-      });
-    }, usedTime > 200 ? 0 : 200 - usedTime);
+    setTimeout(
+      () => {
+        this.setState({ loading: false }, () => {
+          onLoadComplete(lookUpResult);
+        });
+      },
+      usedTime > 100 ? 0 : 100 - usedTime
+    );
   };
 
   render() {
@@ -84,13 +82,17 @@ class InjectTransTooltipIcon extends React.Component<
           transparent
           square
           style={{
-            border: "none",
+            border: "none"
           }}
           loading={this.state.loading}
           onClick={() => this.reloadData()}
           {...this.props}
         >
-          <Icon>rocket</Icon>
+          <img
+            src={r("/images/trans_tooltip_icon.png")}
+            alt="icon"
+            style={{ width: "34px" }}
+          />
         </Button>
       </ShadowRoot>
     );

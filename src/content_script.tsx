@@ -20,7 +20,7 @@ TranslateOverrides.fetch = (
         status: response.status,
         statusText: response.statusText,
         json: () => response.data,
-        text: () => response.data,
+        text: () => response.data
       });
     };
     const failureCallback = (error: any) => reject(error);
@@ -31,7 +31,7 @@ TranslateOverrides.fetch = (
     sharedApiClient
       .request({
         method,
-        url,
+        url
       })
       .then(successCallback)
       .catch(failureCallback);
@@ -70,16 +70,6 @@ const onMouseUp = (e: any) => {
   const selectionRange = selection.getRangeAt(0);
   const selectionRect = selectionRange.getBoundingClientRect();
 
-  // el.style.zIndex = "10000";
-  // el.style.visibility = "visible";
-
-  // el.style.position = 'absolute';
-  // el.style.top = `${selectionRect.y}px`;
-  // el.style.left = `${selectionRect.x}px`;
-  // el.style.width = `${selectionRect.width}px`;
-  // el.style.height = `${selectionRect.height}px`;
-  // el.style.backgroundColor = 'red';
-
   ReactDOM.render(
     <InjectTransTooltip
       q={selection.toString().trim()}
@@ -97,7 +87,7 @@ let mouseupTimer: any;
 document.addEventListener("mouseup", (e: any) => {
   const keys = ["selectionTranslateMode"];
   const callback = ({ selectionTranslateMode }: any) => {
-    if (selectionTranslateMode === 'disabled') return;
+    if (selectionTranslateMode === "disabled") return;
 
     if (!mouseupTimer) clearTimeout(mouseupTimer);
     mouseupTimer = setTimeout(() => onMouseUp(e), 300);
