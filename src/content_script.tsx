@@ -40,7 +40,8 @@ TranslateOverrides.fetch = (
 
 const onMouseUp = (e: any) => {
   if (e.path.length > 0) {
-    if (e.path[0].tagName === "INPUT") return;
+    const firstTagName = e.path[0].tagName;
+    if (firstTagName === "INPUT" || firstTagName === "TEXTAREA") return;
     if (e.path.findIndex(({ id }: any) => id === ELEMENT_ID) >= 0) return;
   }
 
@@ -93,4 +94,11 @@ document.addEventListener("mouseup", (e: any) => {
     mouseupTimer = setTimeout(() => onMouseUp(e), 300);
   };
   chrome.storage.sync.get(keys, callback);
+});
+
+window.addEventListener("message", (e) => {
+  const { source = '', payload } = e.data || {};
+  if (source.indexOf('wordway-') === -1) return;
+
+  chrome.runtime.sendMessage(payload);
 });

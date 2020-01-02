@@ -9,6 +9,8 @@ import {
   Widget,
   WidgetContent,
   Radio,
+  Dropdown,
+  DropdownItem
 } from "@duik/it";
 import toastr from "toastr";
 
@@ -18,13 +20,11 @@ import { SelectTranslateEngine } from "../../components";
 
 interface OptionsProps {}
 interface OptionsState {
-  highlightNewWordsMode: string;
   selectionTranslateMode: string;
   selectionTranslateEngine: string;
 }
 
 const defaultOptions = {
-  highlightNewWordsMode: "",
   selectionTranslateMode: "enable-translate-tooltip",
   selectionTranslateEngine: "youdao-web"
 };
@@ -34,7 +34,6 @@ class Options extends React.Component<OptionsProps, OptionsState> {
     super(props, state);
 
     this.state = {
-      highlightNewWordsMode: "",
       selectionTranslateMode: "",
       selectionTranslateEngine: ""
     };
@@ -77,11 +76,7 @@ class Options extends React.Component<OptionsProps, OptionsState> {
   };
 
   render() {
-    const {
-      highlightNewWordsMode,
-      selectionTranslateMode,
-      selectionTranslateEngine,
-    } = this.state;
+    const { selectionTranslateMode, selectionTranslateEngine } = this.state;
     return (
       <>
         <Helmet>
@@ -101,20 +96,28 @@ class Options extends React.Component<OptionsProps, OptionsState> {
                   <h3>扩展程序选项</h3>
                   <div
                     style={{
-                      display: 'flex',
-                      justifyContent: 'flex-end',
+                      display: "flex",
+                      justifyContent: "flex-end"
                     }}
                   >
-                    <a
-                      href="https://wordway.app"
-                      target="__blank"
+                    <Dropdown
+                      buttonText="登录"
+                      buttonProps={{
+                        onClick: () => {
+                          const urlSearchParams = new URLSearchParams(
+                            Object.entries({
+                              extensionId: chrome.i18n.getMessage("@@extension_id"),
+                            })
+                          );
+                          chrome.tabs.create({
+                            url: `https://wordway.app/account/login?${urlSearchParams}`
+                          });
+                        }
+                      }}
                     >
-                      <img
-                        src="./images/icon128.png"
-                        alt="logo"
-                        style={{ width: '26px' }}
-                      />
-                    </a>
+                      <DropdownItem>你的资料</DropdownItem>
+                      <DropdownItem>登出</DropdownItem>
+                    </Dropdown>
                   </div>
                 </FormGroupContainer>
               </WidgetContent>
@@ -123,50 +126,6 @@ class Options extends React.Component<OptionsProps, OptionsState> {
                 onSubmit={this.handleClickSubmit}
                 onReset={this.handleClickReset}
               >
-                <WidgetContent>
-                  <FormGroupContainer>
-                    <h5>标记生词</h5>
-                    <FormGroup
-                      style={{
-                        display: "flex",
-                        flexDirection: "column"
-                      }}
-                    >
-                      <span className="content-title">
-                        高亮生词（在网页中时高亮显示你标记过的生词）
-                      </span>
-                      <Radio
-                        checked={highlightNewWordsMode === "disabled"}
-                        label="禁用该功能"
-                        name="highlightNewWordsMode"
-                        value="disabled"
-                        onChange={(e) => {
-                          this.setState({ highlightNewWordsMode: e.currentTarget.value });
-                        }}
-                      />
-                      <Radio
-                        checked={highlightNewWordsMode === "enable-001"}
-                        label="显示标记线"
-                        name="highlightNewWordsMode"
-                        description="点击即可显示弹出式翻译。"
-                        value="enable-001"
-                        onChange={(e) => {
-                          this.setState({ highlightNewWordsMode: e.currentTarget.value });
-                        }}
-                      />
-                      <Radio
-                        checked={highlightNewWordsMode === "enable-002"}
-                        label="显示标记线及翻译"
-                        name="highlightNewWordsMode"
-                        description="在标记线上方显示翻译，点击即可显示弹出式翻译。"
-                        value="enable-002"
-                        onChange={(e) => {
-                          this.setState({ highlightNewWordsMode: e.currentTarget.value });
-                        }}
-                      />
-                    </FormGroup>
-                  </FormGroupContainer>
-                </WidgetContent>
                 <WidgetContent>
                   <FormGroupContainer>
                     <h5>划词翻译</h5>
@@ -184,28 +143,38 @@ class Options extends React.Component<OptionsProps, OptionsState> {
                         label="禁用该功能"
                         name="selectionTranslateMode"
                         value="disabled"
-                        onChange={(e) => {
-                          this.setState({ selectionTranslateMode: e.currentTarget.value });
+                        onChange={e => {
+                          this.setState({
+                            selectionTranslateMode: e.currentTarget.value
+                          });
                         }}
                       />
                       <Radio
-                        checked={selectionTranslateMode === "enable-translate-icon"}
+                        checked={
+                          selectionTranslateMode === "enable-translate-icon"
+                        }
                         label="显示图标"
                         name="selectionTranslateMode"
                         description="点击图标即可显示弹出式翻译。"
                         value="enable-translate-icon"
-                        onChange={(e) => {
-                          this.setState({ selectionTranslateMode: e.currentTarget.value });
+                        onChange={e => {
+                          this.setState({
+                            selectionTranslateMode: e.currentTarget.value
+                          });
                         }}
                       />
                       <Radio
-                        checked={selectionTranslateMode === "enable-translate-tooltip"}
+                        checked={
+                          selectionTranslateMode === "enable-translate-tooltip"
+                        }
                         label="显示弹出式翻译"
                         name="selectionTranslateMode"
                         description="自动将选中的单词或短语发送至翻译引擎，以确定是否应显示翻译。"
                         value="enable-translate-tooltip"
-                        onChange={(e) => {
-                          this.setState({ selectionTranslateMode: e.currentTarget.value });
+                        onChange={e => {
+                          this.setState({
+                            selectionTranslateMode: e.currentTarget.value
+                          });
                         }}
                       />
                     </FormGroup>

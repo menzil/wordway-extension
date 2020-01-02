@@ -8,10 +8,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // onMessage must return "true" if response is async.
   let isResponseAsync = false;
 
-  if (request.setBadgeText) {
-    chrome.browserAction.setBadgeText({ text: '99+' });
-  }
-
   const _handleMessageRequest = () => {
     const successCallback = (response: any) => sendResponse({ response });
     const failureCallback = (error: any) => sendResponse({ error });
@@ -46,14 +42,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   return isResponseAsync;
-});
-
-chrome.tabs.onActivated.addListener(function(activeInfo) {
-  console.log(activeInfo);
-  // alert(JSON.stringify(activeInfo))
-  chrome.tabs.get(activeInfo.tabId, (tab) => {
-    // alert(JSON.stringify(tab))
-
-    chrome.runtime.sendMessage({ setBadgeText: true });
-  })
 });
