@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Alert,
   WidgetContainer,
   Widget,
   WidgetContent,
@@ -31,7 +32,7 @@ const IpaItem = (props: any) => {
         }}
       >
         {`${flag}`}
-        {ipa ? ` [${ipa}]` : ''}
+        {ipa ? ` [${ipa}]` : ""}
       </span>
       <button
         style={{
@@ -73,7 +74,7 @@ const DefinitionListItem = (props: any) => {
     >
       <span
         style={{
-          fontSize: '13px',
+          fontSize: "13px",
           fontWeight: "bold",
           paddingTop: 0,
           paddingBottom: 0,
@@ -183,8 +184,8 @@ class InjectTransTooltipResult extends React.Component<
               <span
                 style={{
                   fontWeight: "bold",
-                  fontSize: "1.125rem",
-                  lineHeight: "1.75rem"
+                  fontSize: "18px",
+                  lineHeight: "38px"
                 }}
               >
                 {lookUpResult?.targetText}
@@ -210,6 +211,22 @@ class InjectTransTooltipResult extends React.Component<
             {lookUpResult?.word}
           </h3>
         </WidgetContent>
+        {!lookUpResult?.tip ? null : (
+          <>
+            <Divider />
+            <Alert
+              warning
+              style={{
+                width: "100%",
+                padding: "6px 16px",
+                border: "none",
+                borderRadius: 0
+              }}
+            >
+              {lookUpResult?.tip}
+            </Alert>
+          </>
+        )}
         <Divider />
         <WidgetContent
           style={{
@@ -243,11 +260,13 @@ class InjectTransTooltipResult extends React.Component<
                 />
               ))}
             </DefinitionWrapper>
-            <TenseWrapper>
-              {lookUpResult?.tenses?.map((v: any) => (
-                <TenseListItem key={v.type} name={v.name} values={v.values} />
-              ))}
-            </TenseWrapper>
+            {!lookUpResult?.tenses ? null : (
+              <TenseWrapper>
+                {lookUpResult?.tenses?.map((v: any) => (
+                  <TenseListItem key={v.type} name={v.name} values={v.values} />
+                ))}
+              </TenseWrapper>
+            )}
           </FormGroupContainer>
         </WidgetContent>
       </>
@@ -284,9 +303,9 @@ class InjectTransTooltipResult extends React.Component<
             >
               {!lookUpResult?.word ? null : (
                 <ButtonGroup sm>
-                  <Button>
+                  {/* <Button>
                     <FeatherIcons.Bookmark size={16} color="var(--text-main)" />
-                  </Button>
+                  </Button> */}
                   <Button>添加到生词本</Button>
                 </ButtonGroup>
               )}

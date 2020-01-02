@@ -62,7 +62,7 @@ class InjectTransTooltipIcon extends React.Component<
     this.setState({ loading: true });
     const lookUpResult: LookUpResult = await this.translate
       .engine(selectionTranslateEngine)
-      .lookUp(q);
+      .lookUp(q, { exclude: ['originData']});
 
     const usedTime = new Date().getTime() - beginTime;
     setTimeout(
