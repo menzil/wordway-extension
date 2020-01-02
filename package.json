@@ -1,13 +1,12 @@
 {
   "name": "wordway-extension",
   "version": "0.1.0",
-  "private": true,
+  "homepage": "https://wordway.app/",
   "dependencies": {
     "@babel/core": "7.7.4",
     "@babel/helper-create-regexp-features-plugin": "^7.7.4",
     "@babel/plugin-transform-react-jsx": "^7.7.7",
     "@babel/plugin-transform-react-jsx-self": "^7.7.4",
-    "@duik/icon": "^0.5.3",
     "@duik/it": "^0.5.3",
     "@svgr/webpack": "4.3.3",
     "@testing-library/jest-dom": "^4.2.4",

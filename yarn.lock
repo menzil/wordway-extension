@@ -1094,13 +1094,6 @@
     "@duik/core" "^0.5.3"
     "@duik/create-simple-component" "^0.5.3"
 
-"@duik/icon@^0.5.3":
-  version "0.5.3"
-  resolved "https://registry.npmjs.org/@duik/icon/-/icon-0.5.3.tgz#c6b2611b7aadffa82964cf214612cf54e16e27bf"
-  integrity sha512-dYxX2LqSJ2o7b6+kiGg8n9mYnrMjlae0YoTcPoasCR5/2CxNA9MvPJtCovUHI6cUXGuq2JP16Da4ZTfoXXTvwQ==
-  dependencies:
-    "@duik/create-simple-component" "^0.5.3"
-
 "@duik/it@^0.5.3":
   version "0.5.3"
   resolved "https://registry.npmjs.org/@duik/it/-/it-0.5.3.tgz#01ed4bbd00d25045dd24d9b5fc5d16a4e44d5622"
