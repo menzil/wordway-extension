@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Alert,
   WidgetContainer,
@@ -9,11 +9,12 @@ import {
   Button,
   ButtonGroup,
   FormGroup
-} from "@duik/it";
-import * as FeatherIcons from "react-feather";
-import { LookUpResult } from "@wordway/translate-api";
+} from '@duik/it';
+import * as FeatherIcons from 'react-feather';
+import { LookUpResult } from '@wordway/translate-api';
 
-import ShadowRoot from "../ShadowRoot";
+import ShadowRoot from '../ShadowRoot';
+import { sharedApiClient } from '../../networking';
 
 const IpaItem = (props: any) => {
   const { flag, ipa, pronunciationUrl } = props;
@@ -21,34 +22,34 @@ const IpaItem = (props: any) => {
   return (
     <div
       style={{
-        marginRight: "12px",
-        display: "flex",
-        alignItems: "center"
+        marginRight: '12px',
+        display: 'flex',
+        alignItems: 'center'
       }}
     >
       <span
         style={{
-          fontSize: "14px",
-          marginRight: "6px"
+          fontSize: '14px',
+          marginRight: '6px'
         }}
       >
         {`${flag}`}
-        {ipa ? ` [${ipa}]` : ""}
+        {ipa ? ` [${ipa}]` : ''}
       </span>
       <button
         style={{
-          minWidth: "28px",
-          height: "28px",
-          paddingLeft: "4px",
-          paddingRight: "4px",
-          background: "transparent",
-          border: "none",
-          marginTop: "2px",
-          outline: "none"
+          minWidth: '28px',
+          height: '28px',
+          paddingLeft: '4px',
+          paddingRight: '4px',
+          background: 'transparent',
+          border: 'none',
+          marginTop: '2px',
+          outline: 'none'
         }}
         onClick={() => {
           chrome.runtime.sendMessage({
-            method: "playAudio",
+            method: 'playAudio',
             arguments: { url: pronunciationUrl }
           });
         }}
@@ -67,43 +68,43 @@ const DefinitionListItem = (props: any) => {
   return (
     <li
       style={{
-        display: "flex",
-        flexDirection: "row",
+        display: 'flex',
+        flexDirection: 'row',
         padding: 0,
         margin: 0
       }}
     >
       <span
         style={{
-          fontSize: "13px",
-          fontWeight: "bold",
+          fontSize: '13px',
+          fontWeight: 'bold',
           paddingTop: 0,
           paddingBottom: 0,
-          paddingLeft: "4px",
-          paddingRight: "4px",
-          marginRight: "10px",
-          minWidth: "42px",
-          height: "20px",
-          lineHeight: "20px",
-          backgroundColor: "var(--text-secondary)",
-          color: "#fff",
-          verticalAlign: "middle",
-          textAlign: "center"
+          paddingLeft: '4px',
+          paddingRight: '4px',
+          marginRight: '10px',
+          minWidth: '42px',
+          height: '20px',
+          lineHeight: '20px',
+          backgroundColor: 'var(--text-secondary)',
+          color: '#fff',
+          verticalAlign: 'middle',
+          textAlign: 'center'
         }}
       >
         {type}
       </span>
       <span
         style={{
-          fontWeight: "bold",
+          fontWeight: 'bold',
           padding: 0,
           margin: 0,
-          display: "flex",
+          display: 'flex',
           flex: 1,
-          lineHeight: "20px"
+          lineHeight: '20px'
         }}
       >
-        {values.join("；")}
+        {values.join('；')}
       </span>
     </li>
   );
@@ -119,17 +120,17 @@ const TenseListItem = (props: any) => {
     <>
       <span
         style={{
-          margin: "0 6px 0 0",
-          fontSize: "14px"
+          margin: '0 6px 0 0',
+          fontSize: '14px'
         }}
       >
         {name}
       </span>
       <span
         style={{
-          margin: "0 6px 0 0",
-          fontSize: "14px",
-          color: "var(--indigo)"
+          margin: '0 6px 0 0',
+          fontSize: '14px',
+          color: 'var(--indigo)'
         }}
       >
         {values}
@@ -144,18 +145,104 @@ interface InjectTransTooltipContentProps {
   lookUpError?: Error;
 }
 
-interface InjectTransTooltipContentState {}
+interface InjectTransTooltipContentState {
+  currentUser: any;
+  processing: boolean;
+  wordbookWord: any;
+}
 
 class InjectTransTooltipContent extends React.Component<
   InjectTransTooltipContentProps,
   InjectTransTooltipContentState
 > {
-  // constructor(
-  //   props: InjectTransTooltipContentProps,
-  //   state: InjectTransTooltipContentState
-  // ) {
-  //   super(props, state);
-  // }
+  constructor(
+    props: InjectTransTooltipContentProps,
+    state: InjectTransTooltipContentState
+  ) {
+    super(props, state);
+
+    this.state = {
+      currentUser: undefined,
+      processing: false,
+      wordbookWord: undefined
+    };
+  }
+
+  componentDidMount() {
+    const keys = ['currentUser'];
+    const callback = (result: any) => {
+      const currentUser = result.currentUser
+        ? JSON.parse(result.currentUser)
+        : null;
+      this.setState({ currentUser }, () => {
+        if (currentUser) this.reloadData();
+      });
+    };
+    chrome.storage.sync.get(keys, callback);
+  }
+
+  reloadData = async () => {
+    const { lookUpResult } = this.props;
+    const { currentUser } = this.state;
+
+    try {
+      const r = await sharedApiClient.get(
+        `/wordbooks/newwords-for-user-${currentUser?.id}/words/${lookUpResult?.word}`
+      );
+      const {
+        data: { data: wordbookWord }
+      } = r;
+
+      this.setState({
+        wordbookWord
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  handleClickAddToNewWords = async () => {
+    const { lookUpResult } = this.props;
+    const { currentUser } = this.state;
+
+    let wordbookWord;
+    try {
+      this.setState({ processing: true });
+
+      const r = await sharedApiClient.post(
+        `/wordbooks/newwords-for-user-${currentUser?.id}/words`,
+        { word: lookUpResult?.word }
+      );
+      wordbookWord = r.data.data;
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.setState({
+        wordbookWord,
+        processing: false
+      });
+    }
+  };
+
+  handleClickRemoveFromNewWords = async () => {
+    const { lookUpResult } = this.props;
+    const { currentUser } = this.state;
+
+    try {
+      this.setState({ processing: true });
+
+      await sharedApiClient.delete(
+        `/wordbooks/newwords-for-user-${currentUser?.id}/words/${lookUpResult?.word}`
+      );
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.setState({
+        wordbookWord: undefined,
+        processing: false
+      });
+    }
+  };
 
   renderLookUpError = () => {
     const { lookUpError }: InjectTransTooltipContentProps = this.props;
@@ -166,8 +253,8 @@ class InjectTransTooltipContent extends React.Component<
         <FormGroupContainer>
           <FormGroup
             style={{
-              display: "flex",
-              flexDirection: "column"
+              display: 'flex',
+              flexDirection: 'column'
             }}
           >
             <h4>{lookUpError?.message}</h4>
@@ -175,7 +262,7 @@ class InjectTransTooltipContent extends React.Component<
         </FormGroupContainer>
       </WidgetContent>
     );
-  }
+  };
 
   renderLookUpResult = () => {
     const { lookUpResult }: InjectTransTooltipContentProps = this.props;
@@ -188,8 +275,8 @@ class InjectTransTooltipContent extends React.Component<
           <FormGroupContainer>
             <FormGroup
               style={{
-                display: "flex",
-                flexDirection: "column"
+                display: 'flex',
+                flexDirection: 'column'
               }}
             >
               <span className="content-title">原文</span>
@@ -199,8 +286,8 @@ class InjectTransTooltipContent extends React.Component<
           <FormGroupContainer>
             <FormGroup
               style={{
-                display: "flex",
-                flexDirection: "column"
+                display: 'flex',
+                flexDirection: 'column'
               }}
             >
               <span className="content-title">译文</span>
@@ -215,12 +302,12 @@ class InjectTransTooltipContent extends React.Component<
       <>
         <WidgetContent
           style={{
-            padding: "16px 16px"
+            padding: '16px 16px'
           }}
         >
           <h3
             style={{
-              marginRight: "12px"
+              marginRight: '12px'
             }}
           >
             {lookUpResult?.word}
@@ -232,9 +319,9 @@ class InjectTransTooltipContent extends React.Component<
             <Alert
               warning
               style={{
-                width: "100%",
-                padding: "6px 16px",
-                border: "none",
+                width: '100%',
+                padding: '6px 16px',
+                border: 'none',
                 borderRadius: 0
               }}
             >
@@ -245,14 +332,14 @@ class InjectTransTooltipContent extends React.Component<
         <Divider />
         <WidgetContent
           style={{
-            padding: "16px 16px"
+            padding: '16px 16px'
           }}
         >
           <FormGroupContainer>
             <div
               style={{
-                display: "flex",
-                flexDirection: "row"
+                display: 'flex',
+                flexDirection: 'row'
               }}
             >
               <IpaItem
@@ -269,7 +356,7 @@ class InjectTransTooltipContent extends React.Component<
             <DefinitionWrapper>
               {lookUpResult?.definitions?.map((v: any) => (
                 <DefinitionListItem
-                  key={v?.values?.join("；")}
+                  key={v?.values?.join('；')}
                   type={v.type}
                   values={v.values}
                 />
@@ -286,26 +373,27 @@ class InjectTransTooltipContent extends React.Component<
         </WidgetContent>
       </>
     );
-  }
+  };
 
   render() {
     const { lookUpResult }: InjectTransTooltipContentProps = this.props;
+    const { currentUser, wordbookWord, processing } = this.state;
 
     return (
       <ShadowRoot>
         <WidgetContainer
           style={{
             padding: 0,
-            minWidth: "360px",
-            minHeight: "120px",
-            maxWidth: "420px",
-            maxHeight: "540px"
+            minWidth: '360px',
+            minHeight: '120px',
+            maxWidth: '420px',
+            maxHeight: '540px'
           }}
         >
           <Widget
             style={{
-              border: "none",
-              boxShadow: "none"
+              border: 'none',
+              boxShadow: 'none'
             }}
           >
             {this.renderLookUpError()}
@@ -313,8 +401,8 @@ class InjectTransTooltipContent extends React.Component<
             <Divider />
             <WidgetContent
               style={{
-                display: "flex",
-                padding: "16px 16px"
+                display: 'flex',
+                padding: '16px 16px'
               }}
             >
               {!lookUpResult?.word ? null : (
@@ -322,7 +410,37 @@ class InjectTransTooltipContent extends React.Component<
                   {/* <Button>
                     <FeatherIcons.Bookmark size={16} color="var(--text-main)" />
                   </Button> */}
-                  <Button>添加到生词本</Button>
+                  <Button
+                    loading={processing}
+                    onClick={() => {
+                      if (!currentUser) {
+                        chrome.runtime.sendMessage({
+                          method: 'openOptionsPage'
+                        });
+                        return;
+                      }
+                      if (!wordbookWord) {
+                        this.handleClickAddToNewWords();
+                      } else {
+                        this.handleClickRemoveFromNewWords();
+                      }
+                    }}
+                  >
+                    {!wordbookWord ? (
+                      <>
+                        <FeatherIcons.Plus size={16} color="var(--text-main)" />
+                        &nbsp;添加到生词本
+                      </>
+                    ) : (
+                      <>
+                        <FeatherIcons.Check
+                          size={16}
+                          color="var(--text-main)"
+                        />
+                        &nbsp;已添加到生词本
+                      </>
+                    )}
+                  </Button>
                 </ButtonGroup>
               )}
               <div style={{ flex: 1 }} />
@@ -331,7 +449,7 @@ class InjectTransTooltipContent extends React.Component<
                 square
                 sm
                 onClick={() => {
-                  chrome.runtime.sendMessage({ method: "openOptionsPage" });
+                  chrome.runtime.sendMessage({ method: 'openOptionsPage' });
                 }}
               >
                 <FeatherIcons.Settings size={16} color="var(--text-main)" />
