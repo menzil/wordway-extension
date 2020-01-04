@@ -80,7 +80,7 @@ class Options extends React.Component<OptionsProps, OptionsState> {
     return (
       <>
         <Helmet>
-          <title>选项 | 一路背单词</title>
+          <title>选项 | 一路背单词（查词助手）</title>
         </Helmet>
         <div
           style={{

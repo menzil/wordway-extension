@@ -1,8 +1,8 @@
 {
   "appName": {
-    "message": "一路背单词"
+    "message": "一路背单词（查词助手）"
   },
   "appDescription": {
-    "message": "浏览文章时可轻松翻译和标注陌生单词。"
+    "message": "浏览文章时可轻松查词、添加到你的生词本。"
   }
 }
