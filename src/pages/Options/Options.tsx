@@ -10,16 +10,19 @@ import {
   WidgetContent,
   Radio,
   Dropdown,
-  DropdownItem
+  DropdownItem,
+  DropdownMenuPosition
 } from "@duik/it";
 import toastr from "toastr";
 
 import { SelectTranslateEngine } from "../../components";
+import config from "../../utils/config";
 
 // import cls from "./Options.module.scss";
 
 interface OptionsProps {}
 interface OptionsState {
+  currentUser: any;
   selectionTranslateMode: string;
   selectionTranslateEngine: string;
 }
@@ -34,15 +37,46 @@ class Options extends React.Component<OptionsProps, OptionsState> {
     super(props, state);
 
     this.state = {
+      currentUser: null,
       selectionTranslateMode: "",
       selectionTranslateEngine: ""
     };
   }
 
   componentDidMount() {
-    const keys = ["selectionTranslateMode", "selectionTranslateEngine"];
-    const callback = (result: any) => this.setState({ ...result });
+    const keys = [
+      "currentUser",
+      "selectionTranslateMode",
+      "selectionTranslateEngine"
+    ];
+    const callback = (result: any) => {
+      const { currentUser, ...rest } = result;
+      this.setState({
+        currentUser: currentUser ? JSON.parse(currentUser) : null,
+        ...rest
+      });
+    };
     chrome.storage.sync.get(keys, callback);
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      for (const key in changes) {
+        if (key === "currentUser") {
+          const storageChange = changes[key];
+
+          this.setState({
+            currentUser: storageChange.newValue
+              ? JSON.parse(storageChange.newValue)
+              : null
+          });
+
+          if (!storageChange.oldValue) {
+            toastr.success("登录成功。");
+          }
+          if (!storageChange.newValue) {
+            toastr.success("退出成功。");
+          }
+        }
+      }
+    });
   }
 
   handleClickSubmit = (event: any) => {
@@ -76,7 +110,11 @@ class Options extends React.Component<OptionsProps, OptionsState> {
   };
 
   render() {
-    const { selectionTranslateMode, selectionTranslateEngine } = this.state;
+    const {
+      currentUser,
+      selectionTranslateMode,
+      selectionTranslateEngine
+    } = this.state;
     return (
       <>
         <Helmet>
@@ -100,24 +138,47 @@ class Options extends React.Component<OptionsProps, OptionsState> {
                       justifyContent: "flex-end"
                     }}
                   >
-                    <Dropdown
-                      buttonText="登录"
-                      buttonProps={{
-                        onClick: () => {
+                    {currentUser ? null : (
+                      <Button
+                        onClick={() => {
                           const urlSearchParams = new URLSearchParams(
                             Object.entries({
-                              extensionId: chrome.i18n.getMessage("@@extension_id"),
+                              extensionId: chrome.i18n.getMessage(
+                                "@@extension_id"
+                              )
                             })
                           );
                           chrome.tabs.create({
-                            url: `https://wordway.app/account/login?${urlSearchParams}`
+                            url: `${config.webURL}/account/login?${urlSearchParams}`
                           });
-                        }
-                      }}
-                    >
-                      <DropdownItem>你的资料</DropdownItem>
-                      <DropdownItem>登出</DropdownItem>
-                    </Dropdown>
+                        }}
+                      >
+                        立即登录
+                      </Button>
+                    )}
+                    {!currentUser ? null : (
+                      <Dropdown
+                        menuPosition={DropdownMenuPosition["bottom-right"]}
+                        buttonText={`${currentUser?.name}（${currentUser?.email}）`}
+                      >
+                        <DropdownItem
+                          onClick={() => {
+                            const urlSearchParams = new URLSearchParams(
+                              Object.entries({
+                                extensionId: chrome.i18n.getMessage(
+                                  "@@extension_id"
+                                )
+                              })
+                            );
+                            chrome.tabs.create({
+                              url: `${config.webURL}/account/logout?${urlSearchParams}`
+                            });
+                          }}
+                        >
+                          退出登录
+                        </DropdownItem>
+                      </Dropdown>
+                    )}
                   </div>
                 </FormGroupContainer>
               </WidgetContent>

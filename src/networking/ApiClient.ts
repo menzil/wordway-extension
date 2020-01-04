@@ -3,12 +3,14 @@ import axios, {
   AxiosPromise,
   AxiosRequestConfig,
   AxiosResponse
-} from "axios";
-import sharedConfig from "../utils/config";
-import normalize from "../utils/normalize";
+} from 'axios';
+import sharedConfig from '../utils/config';
+import normalize from '../utils/normalize';
 
 class ApiClient {
   private sharedAxios: AxiosInstance;
+
+  private accessToken: string = '';
 
   public constructor() {
     this.sharedAxios = axios.create({
@@ -17,18 +19,17 @@ class ApiClient {
 
     this.sharedAxios.interceptors.request.use(
       async (config): Promise<AxiosRequestConfig> => {
-        const url = config.url?.toString() ?? '';
+        const baseURL = config.baseURL?.toString() ?? '';
         let nextConfig = config;
-        if (url.startsWith(sharedConfig.apiURL)) {
-          // const { account } = configuredStore.store.getState();
+
+        if (baseURL.startsWith(sharedConfig.apiURL)) {
           nextConfig = Object.assign({}, config, {
-            data: normalize("snakecase", config.data)
+            data: normalize('snakecase', config.data)
           });
 
-          // if (account && account.isLoggedIn) {
-          //   const { accessToken = '' } = account.jwtToken || {};
-          //   nextConfig.headers.Authorization = `Bearer ${accessToken}`;
-          // }
+          if (this.accessToken) {
+            nextConfig.headers.Authorization = `Bearer ${this.accessToken}`;
+          }
         }
         return nextConfig;
       }
@@ -39,7 +40,7 @@ class ApiClient {
         let nextResponse = response;
         if (url.startsWith(sharedConfig.apiURL)) {
           nextResponse = Object.assign({}, response, {
-            data: normalize("camelcase", response.data)
+            data: normalize('camelcase', response.data)
           });
         }
         return nextResponse;
@@ -56,22 +57,35 @@ class ApiClient {
         return Promise.reject(error);
       }
     );
+
+    chrome.storage.sync.get(['accessToken'], (result: any) => {
+      this.accessToken = result.accessToken;
+    });
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      for (const key in changes) {
+        if (key === 'accessToken') {
+          const storageChange = changes[key];
+
+          this.accessToken = storageChange.newValue;
+        }
+      }
+    });
   }
 
   public request<T = any, R = AxiosResponse<T>>(
     config: AxiosRequestConfig,
-    runInBackground = true,
+    runInBackground = true
   ): Promise<R> {
     if (!runInBackground) {
       return this.sharedAxios.request(config);
     }
 
     return new Promise<R>((resolve, reject) => {
-      const message = { method: 'request', arguments: config }
+      const message = { method: 'request', arguments: config };
       const responseCallback = ({ response, error }: any) => {
         if (response) resolve(response);
         if (error) reject(error);
-      }
+      };
       chrome.runtime.sendMessage(message, responseCallback);
     });
   }
@@ -81,7 +95,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): AxiosPromise<T> {
     return this.request({
-      method: "GET",
+      method: 'GET',
       url,
       ...config
     });
@@ -89,7 +103,7 @@ class ApiClient {
 
   public delete(url: string, config?: AxiosRequestConfig): AxiosPromise {
     return this.request({
-      method: "DELETE",
+      method: 'DELETE',
       url,
       ...config
     });
@@ -101,7 +115,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): AxiosPromise<T> {
     return this.request({
-      method: "POST",
+      method: 'POST',
       url,
       data,
       ...config
@@ -114,7 +128,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): AxiosPromise<T> {
     return this.request({
-      method: "PUT",
+      method: 'PUT',
       url,
       data,
       ...config
@@ -127,7 +141,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): AxiosPromise<T> {
     return this.request({
-      method: "PATCH",
+      method: 'PATCH',
       url,
       data,
       ...config
