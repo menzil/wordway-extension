@@ -45,10 +45,15 @@ const onMouseUp = (e: any) => {
     if (e.path.findIndex(({ id }: any) => id === ELEMENT_ID) >= 0) return;
   }
 
-  let el = document.getElementById(ELEMENT_ID);
-
   let selection: any = document.getSelection();
+  const selectionRange = selection.getRangeAt(0);
+  const selectionRect = selectionRange.getBoundingClientRect();
+  // 未获取 x/y 轴的值，不进行任何操作
+  if (selectionRect.x === 0 && selectionRect.y === 0) return;
+
   const q = selection.toString().trim();
+
+  let el = document.getElementById(ELEMENT_ID);
 
   if (q.length === 0) {
     if (el) el.remove();
@@ -67,9 +72,6 @@ const onMouseUp = (e: any) => {
 
     document.body.appendChild(el);
   }
-
-  const selectionRange = selection.getRangeAt(0);
-  const selectionRect = selectionRange.getBoundingClientRect();
 
   ReactDOM.render(
     <InjectTransTooltip

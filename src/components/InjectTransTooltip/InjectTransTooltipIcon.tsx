@@ -59,20 +59,27 @@ class InjectTransTooltipIcon extends React.Component<
 
     let beginTime = new Date().getTime();
 
-    this.setState({ loading: true });
-    const lookUpResult: LookUpResult = await this.translate
-      .engine(selectionTranslateEngine)
-      .lookUp(q, { exclude: ['originData']});
+    let lookUpResult: LookUpResult;
+    let lookUpError: Error;
 
-    const usedTime = new Date().getTime() - beginTime;
-    setTimeout(
-      () => {
-        this.setState({ loading: false }, () => {
-          onLoadComplete(lookUpResult);
-        });
-      },
-      usedTime > 100 ? 0 : 100 - usedTime
-    );
+    try {
+      this.setState({ loading: true });
+      lookUpResult = await this.translate
+        .engine(selectionTranslateEngine)
+        .lookUp(q, { exclude: ['originData']});
+    } catch (e) {
+      lookUpError = e;
+    } finally {
+      const usedTime = new Date().getTime() - beginTime;
+      setTimeout(
+        () => {
+          this.setState({ loading: false }, () => {
+            onLoadComplete(lookUpResult, lookUpError);
+          });
+        },
+        usedTime > 100 ? 0 : 100 - usedTime
+      );
+    }
   };
 
   render() {

@@ -7,7 +7,8 @@ import {
   Divider,
   FormGroupContainer,
   Button,
-  ButtonGroup
+  ButtonGroup,
+  FormGroup
 } from "@duik/it";
 import * as FeatherIcons from "react-feather";
 import { LookUpResult } from "@wordway/translate-api";
@@ -137,62 +138,76 @@ const TenseListItem = (props: any) => {
   );
 };
 
-interface InjectTransTooltipResultProps {
+interface InjectTransTooltipContentProps {
   q: string;
   lookUpResult?: LookUpResult;
+  lookUpError?: Error;
 }
 
-interface InjectTransTooltipResultState {}
+interface InjectTransTooltipContentState {}
 
-class InjectTransTooltipResult extends React.Component<
-  InjectTransTooltipResultProps,
-  InjectTransTooltipResultState
+class InjectTransTooltipContent extends React.Component<
+  InjectTransTooltipContentProps,
+  InjectTransTooltipContentState
 > {
   // constructor(
-  //   props: InjectTransTooltipResultProps,
-  //   state: InjectTransTooltipResultState
+  //   props: InjectTransTooltipContentProps,
+  //   state: InjectTransTooltipContentState
   // ) {
   //   super(props, state);
   // }
 
-  renderLookUpResult() {
-    const { lookUpResult }: InjectTransTooltipResultProps = this.props;
+  renderLookUpError = () => {
+    const { lookUpError }: InjectTransTooltipContentProps = this.props;
+    if (!lookUpError) return <></>;
+
+    return (
+      <WidgetContent>
+        <FormGroupContainer>
+          <FormGroup
+            style={{
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+            <h4>{lookUpError?.message}</h4>
+          </FormGroup>
+        </FormGroupContainer>
+      </WidgetContent>
+    );
+  }
+
+  renderLookUpResult = () => {
+    const { lookUpResult }: InjectTransTooltipContentProps = this.props;
+
+    if (!lookUpResult) return <></>;
 
     if (!lookUpResult?.word) {
       return (
-        <>
-          <WidgetContent
-            style={{
-              padding: "16px 16px"
-            }}
-          >
-            <h4
+        <WidgetContent>
+          <FormGroupContainer>
+            <FormGroup
               style={{
-                marginRight: "12px"
+                display: "flex",
+                flexDirection: "column"
               }}
             >
-              {lookUpResult?.sourceText}
-            </h4>
-          </WidgetContent>
-          <Divider />
-          <WidgetContent
-            style={{
-              padding: "16px 16px"
-            }}
-          >
-            <FormGroupContainer>
-              <span
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "18px",
-                  lineHeight: "38px"
-                }}
-              >
-                {lookUpResult?.targetText}
-              </span>
-            </FormGroupContainer>
-          </WidgetContent>
-        </>
+              <span className="content-title">原文</span>
+              <h4>{lookUpResult?.sourceText}</h4>
+            </FormGroup>
+          </FormGroupContainer>
+          <FormGroupContainer>
+            <FormGroup
+              style={{
+                display: "flex",
+                flexDirection: "column"
+              }}
+            >
+              <span className="content-title">译文</span>
+              <h4>{lookUpResult?.targetText}</h4>
+            </FormGroup>
+          </FormGroupContainer>
+        </WidgetContent>
       );
     }
 
@@ -274,15 +289,15 @@ class InjectTransTooltipResult extends React.Component<
   }
 
   render() {
-    const { lookUpResult }: InjectTransTooltipResultProps = this.props;
+    const { lookUpResult }: InjectTransTooltipContentProps = this.props;
 
     return (
       <ShadowRoot>
         <WidgetContainer
           style={{
             padding: 0,
-            minWidth: "340px",
-            minHeight: "160px",
+            minWidth: "360px",
+            minHeight: "120px",
             maxWidth: "420px",
             maxHeight: "540px"
           }}
@@ -293,6 +308,7 @@ class InjectTransTooltipResult extends React.Component<
               boxShadow: "none"
             }}
           >
+            {this.renderLookUpError()}
             {this.renderLookUpResult()}
             <Divider />
             <WidgetContent
@@ -328,4 +344,4 @@ class InjectTransTooltipResult extends React.Component<
   }
 }
 
-export default InjectTransTooltipResult;
+export default InjectTransTooltipContent;

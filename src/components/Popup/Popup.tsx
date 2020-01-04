@@ -7,10 +7,6 @@ import {
   Widget,
   WidgetContent
 } from "@duik/it";
-// import Translate from '@wordway/translate-api';
-// import YoudaoEngine from '@wordway/translate-engine-youdao';
-
-// import { sharedApiClient } from "../../networking";
 
 // import cls from "./Popup.module.scss";
 

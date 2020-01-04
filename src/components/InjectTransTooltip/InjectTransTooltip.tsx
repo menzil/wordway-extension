@@ -3,8 +3,8 @@ import { Popper } from "react-popper";
 import classNames from "classnames";
 import { LookUpResult } from "@wordway/translate-api";
 
+import InjectTransTooltipContent from "./InjectTransTooltipContent";
 import InjectTransTooltipIcon from "./InjectTransTooltipIcon";
-import InjectTransTooltipResult from "./InjectTransTooltipResult";
 
 import cls from "./InjectTransTooltip.module.scss";
 
@@ -39,6 +39,7 @@ interface InjectTransTooltipState {
   visible: boolean;
   switching: boolean;
   lookUpResult?: LookUpResult;
+  lookUpError?: Error;
 }
 
 class InjectTransTooltip extends React.Component<
@@ -82,30 +83,27 @@ class InjectTransTooltip extends React.Component<
 
   renderTransTooltipIcon = () => {
     const { q } = this.props;
-    const handleLoadComplete = (lookUpResult: any) => {
+    const handleLoadComplete = (lookUpResult: any, lookUpError: any) => {
       this.setState({ switching: true });
       setTimeout(() => {
         this.setState({
           switching: false,
-          lookUpResult
+          lookUpResult,
+          lookUpError
         });
-      }, 10);
+      }, 1);
     };
 
-    return (
-      <InjectTransTooltipIcon
-        q={q}
-        onLoadComplete={handleLoadComplete}
-      />
-    );
+    return <InjectTransTooltipIcon q={q} onLoadComplete={handleLoadComplete} />;
   };
 
-  renderTransTooltipResult = () => {
+  renderTransTooltipContent = () => {
     return (
       <>
-        <InjectTransTooltipResult
+        <InjectTransTooltipContent
           q={this.props.q}
           lookUpResult={this.state.lookUpResult}
+          lookUpError={this.state.lookUpError}
         />
         <button onClick={this.handleClose} className={cls["btn-close"]}>
           <span />
@@ -115,12 +113,14 @@ class InjectTransTooltip extends React.Component<
   };
 
   render() {
-    const { switching, lookUpResult } = this.state;
+    const { switching, lookUpResult, lookUpError } = this.state;
     if (switching) return <div />;
 
-    let popperBody = lookUpResult
-      ? this.renderTransTooltipResult()
-      : this.renderTransTooltipIcon();
+    let popperBody = this.renderTransTooltipIcon();
+
+    if (lookUpResult || lookUpError) {
+      popperBody = this.renderTransTooltipContent();
+    }
 
     return (
       <Popper referenceElement={this.virtualReferenceElement}>
@@ -143,7 +143,7 @@ class InjectTransTooltip extends React.Component<
               })}
             >
               <div className={cls["popper-body"]}>{popperBody}</div>
-              {!lookUpResult ? null : (
+              {!(lookUpResult || lookUpError) ? null : (
                 <div
                   ref={arrowProps.ref}
                   data-placement={placement}

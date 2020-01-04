@@ -1683,11 +1683,6 @@
   resolved "https://registry.npmjs.org/@types/classnames/-/classnames-2.2.9.tgz#d868b6febb02666330410fe7f58f3c4b8258be7b"
   integrity sha512-MNl+rT5UmZeilaPxAVs6YaPC2m6aA8rofviZbhbxpPpl61uKodfdQVsBtgJGTqGizEf02oW3tsVe7FYB8kK14A==
 
-"@types/crypto-js@^3.1.43":
-  version "3.1.43"
-  resolved "https://registry.npmjs.org/@types/crypto-js/-/crypto-js-3.1.43.tgz#b859347d6289ba13e347c335a4c9efa63337a748"
-  integrity sha512-EHe/YKctU3IYNBsDmSOPX/7jLHPRlx8WaiDKSY9JCTnJ8XJeM4c0ZJvx+9Gxmr2s2ihI92R+3U/gNL1sq5oRuQ==
-
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
   resolved "https://registry.npmjs.org/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
@@ -2043,25 +2038,26 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
-"@wordway/translate-api@link:../wordway/packages/translate-api":
-  version "0.0.0"
-  uid ""
+"@wordway/translate-api@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@wordway/translate-api/-/translate-api-0.1.1.tgz#dde75a4904439488d0c8d17a6fc1cbf172d7615d"
+  integrity sha512-QmOemEnY2Yi7jNA6pCtcr2YzL28wlqYqy90n6bxVy4lXRfV6K5BxVH9HCeWhlE4qYhXnoL1M2+DMy68VLdXW2w==
 
-"@wordway/translate-engine-iciba@link:../wordway/packages/translate-engine-iciba":
-  version "0.0.0"
-  uid ""
+"@wordway/translate-webengine-bing@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@wordway/translate-webengine-bing/-/translate-webengine-bing-0.1.1.tgz#268c82319d0735e7e5fbd3d50c81151360683edf"
+  integrity sha512-X40jeSlOn6/VI26sxXOdcKy2UxCQqqnBCWLF9j81F+oMNzjmgBxmkSw9ncq5r66rhtmKd+5BJ7xGC8VGkzBvAA==
+  dependencies:
+    "@wordway/translate-api" "^0.1.1"
+    cheerio "^1.0.0-rc.3"
 
-"@wordway/translate-engine-youdao@link:../wordway/packages/translate-engine-youdao":
-  version "0.0.0"
-  uid ""
-
-"@wordway/translate-webengine-bing@link:../wordway/packages/translate-webengine-bing":
-  version "0.0.0"
-  uid ""
-
-"@wordway/translate-webengine-youdao@link:../wordway/packages/translate-webengine-youdao":
-  version "0.0.0"
-  uid ""
+"@wordway/translate-webengine-youdao@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@wordway/translate-webengine-youdao/-/translate-webengine-youdao-0.1.1.tgz#2aae25987bbed626e58f03468d66a68117d0aed6"
+  integrity sha512-8J+Ixk+5q+LWNfDKc57ReHd12C6R/dJz43SUkspJydQBmQN79Q/qS02ra0lnVxF/O/zPKqX5t+LqmAkzM6aCww==
+  dependencies:
+    "@wordway/translate-api" "^0.1.1"
+    cheerio "^1.0.0-rc.3"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
@@ -3437,11 +3433,6 @@ crypto-browserify@^3.11.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
     randomfill "^1.0.3"
-
-crypto-js@^3.1.9-1:
-  version "3.1.9-1"
-  resolved "https://registry.npmjs.org/crypto-js/-/crypto-js-3.1.9-1.tgz#fda19e761fc077e01ffbfdc6e9fdfc59e8806cd8"
-  integrity sha1-/aGedh/Ad+Af+/3G6f38WeiAbNg=
 
 css-blank-pseudo@^0.1.4:
   version "0.1.4"
