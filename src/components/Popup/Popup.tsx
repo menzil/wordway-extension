@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Button,
   FormGroupContainer,
@@ -6,7 +6,7 @@ import {
   TextField,
   Widget,
   WidgetContent
-} from "@duik/it";
+} from '@duik/it';
 
 // import cls from "./Popup.module.scss";
 
@@ -21,7 +21,7 @@ class Popup extends React.Component<PopupProps, PopupState> {
     super(props, state);
 
     this.state = {
-      text: ""
+      text: ''
     };
   }
 
@@ -29,9 +29,9 @@ class Popup extends React.Component<PopupProps, PopupState> {
     return (
       <Widget
         style={{
-          border: "none",
+          border: 'none',
           // width: '380px',
-          height: "100vh"
+          height: '100vh'
         }}
       >
         <WidgetContent>

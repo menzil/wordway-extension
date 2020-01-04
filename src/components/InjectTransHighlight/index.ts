@@ -1,3 +1,3 @@
-import InjectTransHighlight from "./InjectTransHighlight";
+import InjectTransHighlight from './InjectTransHighlight';
 
 export { InjectTransHighlight as default, InjectTransHighlight };

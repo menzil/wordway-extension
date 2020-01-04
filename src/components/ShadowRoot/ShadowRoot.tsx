@@ -1,8 +1,8 @@
-import * as React from "react";
-import root from "react-shadow";
+import * as React from 'react';
+import root from 'react-shadow';
 
 // eslint-disable-next-line
-import duikItStyles from "!!raw-loader!./duik_it.txt";
+import duikItStyles from '!!raw-loader!./duik_it.txt';
 
 interface ShadowRootProps {
   children: any;
@@ -19,8 +19,8 @@ class ShadowRoot extends React.Component<ShadowRootProps, ShadowRootState> {
           <>
             <html
               style={{
-                borderRadius: "4px",
-                overflow: "hidden"
+                borderRadius: '4px',
+                overflow: 'hidden'
               }}
             >
               <head>

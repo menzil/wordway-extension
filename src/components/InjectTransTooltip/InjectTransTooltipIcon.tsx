@@ -1,11 +1,11 @@
-import * as React from "react";
-import { Button } from "@duik/it";
-import Translate, { LookUpResult } from "@wordway/translate-api";
-import BingWebEngine from "@wordway/translate-webengine-bing";
-import YoudaoWebEngine from "@wordway/translate-webengine-youdao";
+import * as React from 'react';
+import { Button } from '@duik/it';
+import Translate, { LookUpResult } from '@wordway/translate-api';
+import BingWebEngine from '@wordway/translate-webengine-bing';
+import YoudaoWebEngine from '@wordway/translate-webengine-youdao';
 
-import ShadowRoot from "../ShadowRoot";
-import r from "../../utils/r";
+import ShadowRoot from '../ShadowRoot';
+import r from '../../utils/r';
 
 interface InjectTransTooltipIconProps {
   q: string;
@@ -35,18 +35,18 @@ class InjectTransTooltipIcon extends React.Component<
     this.translate = new Translate([bingWebEngine, youdaoWebEngine]);
 
     this.state = {
-      selectionTranslateMode: "enable-translate-tooltip",
-      selectionTranslateEngine: "youdao-web",
+      selectionTranslateMode: 'enable-translate-tooltip',
+      selectionTranslateEngine: 'youdao-web',
       loading: false
     };
   }
 
   componentDidMount() {
-    const keys = ["selectionTranslateMode", "selectionTranslateEngine"];
+    const keys = ['selectionTranslateMode', 'selectionTranslateEngine'];
     const callback = (result: any) => {
       this.setState({ ...result });
       const { selectionTranslateMode } = result;
-      if (selectionTranslateMode === "enable-translate-tooltip") {
+      if (selectionTranslateMode === 'enable-translate-tooltip') {
         this.reloadData();
       }
     };
@@ -66,7 +66,7 @@ class InjectTransTooltipIcon extends React.Component<
       this.setState({ loading: true });
       lookUpResult = await this.translate
         .engine(selectionTranslateEngine)
-        .lookUp(q, { exclude: ['originData']});
+        .lookUp(q, { exclude: ['originData'] });
     } catch (e) {
       lookUpError = e;
     } finally {
@@ -89,16 +89,16 @@ class InjectTransTooltipIcon extends React.Component<
           transparent
           square
           style={{
-            border: "none"
+            border: 'none'
           }}
           loading={this.state.loading}
           onClick={() => this.reloadData()}
           {...this.props}
         >
           <img
-            src={r("/images/trans_tooltip_icon.png")}
+            src={r('/images/trans_tooltip_icon.png')}
             alt="icon"
-            style={{ width: "34px" }}
+            style={{ width: '34px' }}
           />
         </Button>
       </ShadowRoot>

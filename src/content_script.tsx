@@ -1,12 +1,12 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { Method } from "axios";
-import { TranslateOverrides } from "@wordway/translate-api";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { Method } from 'axios';
+import { TranslateOverrides } from '@wordway/translate-api';
 
-import { InjectTransTooltip } from "./components";
-import { sharedApiClient } from "./networking";
+import { InjectTransTooltip } from './components';
+import { sharedApiClient } from './networking';
 
-const ELEMENT_ID = "___wordway";
+const ELEMENT_ID = '___wordway';
 
 TranslateOverrides.fetch = (
   input: RequestInfo,
@@ -26,7 +26,7 @@ TranslateOverrides.fetch = (
     const failureCallback = (error: any) => reject(error);
 
     const url = input.toString();
-    const method: Method = (init?.method || "GET") as Method;
+    const method: Method = (init?.method || 'GET') as Method;
 
     sharedApiClient
       .request({
@@ -41,7 +41,7 @@ TranslateOverrides.fetch = (
 const onMouseUp = (e: any) => {
   if (e.path.length > 0) {
     const firstTagName = e.path[0].tagName;
-    if (firstTagName === "INPUT" || firstTagName === "TEXTAREA") return;
+    if (firstTagName === 'INPUT' || firstTagName === 'TEXTAREA') return;
     if (e.path.findIndex(({ id }: any) => id === ELEMENT_ID) >= 0) return;
   }
 
@@ -60,15 +60,15 @@ const onMouseUp = (e: any) => {
     return;
   }
 
-  if (el && el.getAttribute("data-q") !== q) {
+  if (el && el.getAttribute('data-q') !== q) {
     el.remove();
     el = null;
   }
 
   if (!el) {
-    el = document.createElement("div");
-    el.setAttribute("id", ELEMENT_ID);
-    el.setAttribute("data-q", q);
+    el = document.createElement('div');
+    el.setAttribute('id', ELEMENT_ID);
+    el.setAttribute('data-q', q);
 
     document.body.appendChild(el);
   }
@@ -87,10 +87,10 @@ const onMouseUp = (e: any) => {
 };
 
 let mouseupTimer: any;
-document.addEventListener("mouseup", (e: any) => {
-  const keys = ["selectionTranslateMode"];
+document.addEventListener('mouseup', (e: any) => {
+  const keys = ['selectionTranslateMode'];
   const callback = ({ selectionTranslateMode }: any) => {
-    if (selectionTranslateMode === "disabled") return;
+    if (selectionTranslateMode === 'disabled') return;
 
     if (!mouseupTimer) clearTimeout(mouseupTimer);
     mouseupTimer = setTimeout(() => onMouseUp(e), 300);
@@ -98,7 +98,7 @@ document.addEventListener("mouseup", (e: any) => {
   chrome.storage.sync.get(keys, callback);
 });
 
-window.addEventListener("message", (e) => {
+window.addEventListener('message', e => {
   const { source = '', payload } = e.data || {};
   if (source.indexOf('wordway-') === -1) return;
 

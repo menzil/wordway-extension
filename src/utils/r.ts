@@ -1,6 +1,6 @@
 const r = (path: string): string => {
   return `chrome-extension://${chrome.i18n.getMessage(
-    "@@extension_id"
+    '@@extension_id'
   )}${path}`;
 };
 

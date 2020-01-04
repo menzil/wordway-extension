@@ -85,7 +85,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "watch": "NODE_ENV=production webpack --watch --config ./config/webpack.prod.js",
+    "watch": "webpack --watch --config ./config/webpack.prod.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {

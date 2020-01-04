@@ -1,4 +1,3 @@
-import InjectTransTooltip from "./InjectTransTooltip"; 
+import InjectTransTooltip from './InjectTransTooltip';
 
 export { InjectTransTooltip as default, InjectTransTooltip };
- 

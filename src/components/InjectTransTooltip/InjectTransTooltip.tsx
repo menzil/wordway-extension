@@ -1,12 +1,12 @@
-import * as React from "react";
-import { Popper } from "react-popper";
-import classNames from "classnames";
-import { LookUpResult } from "@wordway/translate-api";
+import * as React from 'react';
+import { Popper } from 'react-popper';
+import classNames from 'classnames';
+import { LookUpResult } from '@wordway/translate-api';
 
-import InjectTransTooltipContent from "./InjectTransTooltipContent";
-import InjectTransTooltipIcon from "./InjectTransTooltipIcon";
+import InjectTransTooltipContent from './InjectTransTooltipContent';
+import InjectTransTooltipIcon from './InjectTransTooltipIcon';
 
-import cls from "./InjectTransTooltip.module.scss";
+import cls from './InjectTransTooltip.module.scss';
 
 class VirtualReferenceElement {
   boundingClientRect: DOMRect;
@@ -59,14 +59,14 @@ class InjectTransTooltip extends React.Component<
   }
 
   componentDidMount() {
-    document.addEventListener("mouseup", this.onMouseUp);
-    document.addEventListener("mousedown", this.onMouseDown);
+    document.addEventListener('mouseup', this.onMouseUp);
+    document.addEventListener('mousedown', this.onMouseDown);
   }
 
   onMouseUp = () => {};
 
   onMouseDown = ({ path = [] }: any) => {
-    if (path.findIndex(({ id }: any) => id === "___wordway") >= 0) return;
+    if (path.findIndex(({ id }: any) => id === '___wordway') >= 0) return;
 
     this.handleClose();
   };
@@ -105,7 +105,7 @@ class InjectTransTooltip extends React.Component<
           lookUpResult={this.state.lookUpResult}
           lookUpError={this.state.lookUpError}
         />
-        <button onClick={this.handleClose} className={cls["btn-close"]}>
+        <button onClick={this.handleClose} className={cls['btn-close']}>
           <span />
         </button>
       </>
@@ -125,29 +125,29 @@ class InjectTransTooltip extends React.Component<
     return (
       <Popper referenceElement={this.virtualReferenceElement}>
         {({ ref, style, placement, arrowProps }) => (
-          <div ref={ref} className={cls["trans-tooltip"]} style={style}>
+          <div ref={ref} className={cls['trans-tooltip']} style={style}>
             <div
-              className={classNames(cls["popper"], {
-                [cls["popper-fade-in-up"]]:
-                  (placement || "bottom").startsWith("top") &&
+              className={classNames(cls['popper'], {
+                [cls['popper-fade-in-up']]:
+                  (placement || 'bottom').startsWith('top') &&
                   this.state.visible,
-                [cls["popper-fade-in-down"]]:
-                  (placement || "bottom").startsWith("bottom") &&
+                [cls['popper-fade-in-down']]:
+                  (placement || 'bottom').startsWith('bottom') &&
                   this.state.visible,
-                [cls["popper-fade-out-up"]]:
-                  (placement || "bottom").startsWith("top") &&
+                [cls['popper-fade-out-up']]:
+                  (placement || 'bottom').startsWith('top') &&
                   !this.state.visible,
-                [cls["popper-fade-out-down"]]:
-                  (placement || "bottom").startsWith("bottom") &&
+                [cls['popper-fade-out-down']]:
+                  (placement || 'bottom').startsWith('bottom') &&
                   !this.state.visible
               })}
             >
-              <div className={cls["popper-body"]}>{popperBody}</div>
+              <div className={cls['popper-body']}>{popperBody}</div>
               {!(lookUpResult || lookUpError) ? null : (
                 <div
                   ref={arrowProps.ref}
                   data-placement={placement}
-                  className={cls["popper-arrow"]}
+                  className={cls['popper-arrow']}
                   style={arrowProps.style}
                 />
               )}

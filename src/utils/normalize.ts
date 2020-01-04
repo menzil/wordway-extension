@@ -7,7 +7,8 @@ function normalize(caseType: string, object: any): any {
   }
   if (typeof object === 'object') {
     Object.keys(object).forEach((key): any => {
-      const convertedKey = caseType === 'camelcase' ? _.camelCase(key) : _.snakeCase(key);
+      const convertedKey =
+        caseType === 'camelcase' ? _.camelCase(key) : _.snakeCase(key);
       if (convertedKey !== key) {
         object[convertedKey] = object[key];
         delete object[key];
@@ -19,6 +20,6 @@ function normalize(caseType: string, object: any): any {
     object = object.map((v): any => normalize(caseType, v));
   }
   return object;
-};
+}
 
 export default normalize;

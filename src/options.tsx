@@ -1,13 +1,12 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-import { Options as OptionsPage } from "./pages";
+import { Options as OptionsPage } from './pages';
 
-import "./styles/global.scss";
-import { TranslateOverrides } from "@wordway/translate-api";
-import { sharedApiClient } from "./networking";
-import { Method } from "axios";
-
+import './styles/global.scss';
+import { TranslateOverrides } from '@wordway/translate-api';
+import { sharedApiClient } from './networking';
+import { Method } from 'axios';
 
 TranslateOverrides.fetch = (
   input: RequestInfo,
@@ -21,26 +20,25 @@ TranslateOverrides.fetch = (
         status: response.status,
         statusText: response.statusText,
         json: () => response.data,
-        text: () => response.data,
+        text: () => response.data
       });
     };
     const failureCallback = (error: any) => reject(error);
 
     const url = input.toString();
-    const method: Method = (init?.method || "GET") as Method;
+    const method: Method = (init?.method || 'GET') as Method;
 
     sharedApiClient
       .request({
         method,
-        url,
+        url
       })
       .then(successCallback)
       .catch(failureCallback);
   });
 };
 
-
 chrome.tabs.query({ active: true, currentWindow: true }, tab => {
-  const el = document.getElementById("root");
+  const el = document.getElementById('root');
   ReactDOM.render(<OptionsPage />, el);
 });

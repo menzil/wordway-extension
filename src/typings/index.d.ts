@@ -1,5 +1,5 @@
-declare module "react-shadow" {
-  import { ReactNode, ComponentType } from "react";
+declare module 'react-shadow' {
+  import { ReactNode, ComponentType } from 'react';
   type RenderElement = keyof HTMLElementTagNameMap;
   type Root = {
     [name in RenderElement]: ComponentType;
@@ -7,4 +7,4 @@ declare module "react-shadow" {
   const root: Root;
   export default root;
 }
-declare module "*.txt"
+declare module '*.txt';
