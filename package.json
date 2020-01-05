@@ -1,7 +1,7 @@
 {
   "name": "wordway-extension",
   "version": "0.1.0",
-  "homepage": "https://wordway.app/",
+  "homepage": "https://wordway.app",
   "dependencies": {
     "@babel/core": "7.7.4",
     "@babel/helper-create-regexp-features-plugin": "^7.7.4",
