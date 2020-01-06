@@ -19,6 +19,7 @@
 .env.production.local
 
 .env
+.env.development
 .env.production
 
 npm-debug.log*

@@ -20,6 +20,7 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-helmet": "^5.0.14",
+    "@types/toastr": "^2.1.37",
     "@typescript-eslint/eslint-plugin": "^2.8.0",
     "@typescript-eslint/parser": "^2.8.0",
     "@wordway/translate-api": "^0.1.1",
@@ -36,6 +37,7 @@
     "css-loader": "3.2.0",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
+    "env-cmd": "^10.0.1",
     "eslint": "^6.6.0",
     "eslint-config-react-app": "^5.1.0",
     "eslint-loader": "3.0.2",
@@ -84,8 +86,8 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
-    "watch": "webpack --watch --config ./config/webpack.prod.js",
+    "build": "env-cmd -f .env.production node scripts/build.js",
+    "watch": "env-cmd -f .env.development webpack --watch --config ./config/webpack.prod.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
@@ -158,7 +160,5 @@
       "react-app"
     ]
   },
-  "devDependencies": {
-    "@types/toastr": "^2.1.37"
-  }
+  "devDependencies": {}
 }

@@ -8,7 +8,7 @@ const prodConfig = {
   apiURL: 'https://wordway-api.thecode.me'
 };
 
-const config = devConfig;
-// const config = process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
+// const config = devConfig;
+const config = process.env.REACT_APP_ENV === 'production' ? prodConfig : devConfig;
 
 export default config;
