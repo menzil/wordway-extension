@@ -13,10 +13,13 @@ const getClientEnvironment = require('./env');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 const postcssNormalize = require('postcss-normalize');
 
 const appPackageJson = require(paths.appPackageJson);
+
+const manifest = require('../public/manifest.json');
 
 const imageInlineSizeLimit = parseInt(
   process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
@@ -464,6 +467,17 @@ module.exports = function(webpackEnv) {
           // The formatter is invoked directly in WebpackDevServerUtils during development
           formatter: isEnvProduction ? typescriptFormatter : undefined,
         }),
+      (process.env.REACT_APP_ENV === 'production') &&
+        new FileManagerPlugin({
+          onEnd: {
+            mkdir: [
+              './dist/',
+            ],
+            archive: [
+              { source: './build/', destination: `./dist/wordway-extension-v${manifest.version}.zip` },
+            ]
+          }
+        })
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell Webpack to provide empty mocks for them so importing them works.
